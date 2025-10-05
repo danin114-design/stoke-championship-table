@@ -3,269 +3,110 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Championship Standings — Professional Table</title>
+  <title>Stoke City Championship Standings 2025/26</title>
   <style>
     :root{
-      --bg:#0f1724; --card:#0b1220; --muted:#94a3b8; --accent:#06b6d4; --accent-2:#7c3aed;
-      --win:#10b981; --draw:#f59e0b; --loss:#ef4444; --glass: rgba(255,255,255,0.03);
+      --stoke-red:#d71920; --stoke-white:#ffffff; --bg:#0f1724; --card:#111827; --muted:#cbd5e1;
+      --accent:#d71920; --accent-2:#991b1b;
+      --win:#10b981; --draw:#f59e0b; --loss:#ef4444;
       font-family: Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
     }
-    *{box-sizing:border-box}
-    body{margin:0;background:linear-gradient(180deg,#071122 0%, #041024 100%);color:#e6eef6}
-    .wrap{max-width:1100px;margin:36px auto;padding:24px}
-    header{display:flex;gap:16px;align-items:center;margin-bottom:18px}
-    .brand{display:flex;flex-direction:column}
-    .title{font-size:20px;font-weight:700;letter-spacing:-0.2px}
-    .subtitle{color:var(--muted);font-size:13px}
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{margin:0;background:#0f1724;color:#f8fafc}
+    .wrap{max-width:1200px;margin:0 auto;padding:20px}
 
-    .controls{display:flex;gap:10px;align-items:center;margin-left:auto}
-    .search{background:var(--card);border:1px solid rgba(255,255,255,0.03);padding:8px 12px;border-radius:10px;min-width:220px}
+    header{background:var(--stoke-red);color:var(--stoke-white);display:flex;align-items:center;justify-content:space-between;padding:14px 20px;border-radius:10px;box-shadow:0 4px 20px rgba(0,0,0,0.3);}
+    header h1{font-size:24px;font-weight:800;cursor:pointer;}
+    nav{display:flex;gap:14px}
+    nav button{background:transparent;border:2px solid var(--stoke-white);color:var(--stoke-white);padding:6px 14px;border-radius:8px;font-weight:600;cursor:pointer;transition:0.2s}
+    nav button:hover{background:var(--stoke-white);color:var(--stoke-red)}
+
+    .controls{display:flex;gap:10px;align-items:center;margin:16px 0}
+    .search{background:var(--card);border:1px solid rgba(255,255,255,0.1);padding:8px 12px;border-radius:10px;min-width:220px}
     .search input{background:transparent;border:0;color:inherit;outline:none;width:100%}
-    .btn{background:linear-gradient(90deg,var(--accent),var(--accent-2));padding:8px 12px;border-radius:10px;border:none;color:#021627;font-weight:600;cursor:pointer}
-    .btn.ghost{background:transparent;border:1px solid rgba(255,255,255,0.04);color:var(--muted);font-weight:600}
-    .meta{display:flex;gap:10px;align-items:center;color:var(--muted);font-size:13px}
+    .btn{background:linear-gradient(90deg,var(--accent),var(--accent-2));padding:8px 12px;border-radius:10px;border:none;color:#fff;font-weight:600;cursor:pointer}
+    .btn.ghost{background:transparent;border:1px solid rgba(255,255,255,0.2);color:var(--muted);}
 
-    .card{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));border-radius:14px;padding:18px;border:1px solid rgba(255,255,255,0.03);box-shadow:0 8px 30px rgba(2,6,23,0.6)}
-
+    .card{background:var(--card);border-radius:14px;padding:18px;border:1px solid rgba(255,255,255,0.05);box-shadow:0 8px 30px rgba(0,0,0,0.5)}
     table{width:100%;border-collapse:collapse;font-size:14px}
-    thead th{position:sticky;top:0;background:linear-gradient(180deg,#071426,#041126);backdrop-filter:blur(6px);z-index:2;padding:12px 10px;text-align:left;color:var(--muted);font-weight:700;font-size:13px}
-    tbody tr{transition:background .12s ease;border-bottom:1px dashed rgba(255,255,255,0.02)}
-    tbody tr:hover{background:var(--glass)}
-    td{padding:14px 10px;vertical-align:middle}
-
-    .pos{width:56px;font-weight:700;color:var(--muted);text-align:left}
+    thead th{position:sticky;top:0;background:var(--stoke-red);color:var(--stoke-white);padding:10px;text-align:left;font-weight:700;font-size:13px}
+    tbody tr{transition:background .12s ease;border-bottom:1px solid rgba(255,255,255,0.05)}
+    tbody tr:hover{background:rgba(215,25,32,0.2)}
+    td{padding:12px 10px;vertical-align:middle}
+    .pos{width:40px;font-weight:700;color:var(--muted)}
     .team-cell{display:flex;gap:12px;align-items:center}
-    .badge{width:42px;height:42px;border-radius:10px;background:linear-gradient(135deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));display:flex;align-items:center;justify-content:center;font-weight:700}
+    .badge{width:36px;height:36px;border-radius:6px;background:var(--stoke-red);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700}
     .team-name{font-weight:700}
     .team-sub{color:var(--muted);font-size:12px}
-
-    .num{width:56px;text-align:right;color:var(--muted)}
-    .pts{width:86px;text-align:right;font-weight:800;color:#fff}
-
-    .gd-pos{display:flex;align-items:center;gap:8px}
-
+    .num{text-align:right;color:var(--muted)}
+    .pts{text-align:right;font-weight:800;color:#fff}
     .form{display:flex;gap:6px}
-    .form .dot{width:14px;height:14px;border-radius:6px}
+    .form .dot{width:12px;height:12px;border-radius:6px}
     .dot.win{background:var(--win)}
     .dot.draw{background:var(--draw)}
     .dot.loss{background:var(--loss)}
-
-    .progress{height:8px;background:rgba(255,255,255,0.04);border-radius:999px;overflow:hidden;width:120px}
-    .progress > i{display:block;height:100%;background:linear-gradient(90deg,var(--accent),var(--accent-2));}
-
-    .sortable{cursor:pointer;user-select:none}
-    .sort-ind{opacity:0.5;margin-left:8px;font-size:11px}
-
-    /* responsive */
-    @media (max-width:880px){
-      .subtitle{display:none}
-      thead th:nth-child(4),thead th:nth-child(5),thead th:nth-child(6),thead th:nth-child(7),thead th:nth-child(8){display:none}
-      td:nth-child(4),td:nth-child(5),td:nth-child(6),td:nth-child(7),td:nth-child(8){display:none}
-      .search{min-width:140px}
-    }
-
-    footer{margin-top:12px;color:var(--muted);font-size:13px}
-
-    /* small helper */
-    .hint{color:var(--muted);font-size:12px}
+    footer{margin-top:12px;color:var(--muted);font-size:13px;text-align:center}
   </style>
 </head>
 <body>
   <div class="wrap">
     <header>
-      <div class="brand">
-        <div class="title">Championship Standings</div>
-        <div class="subtitle">Professional, responsive, searchable & sortable table — ready for GitHub Pages</div>
-      </div>
-
-      <div class="controls">
-        <div class="meta hint">Season: <strong style="color:#fff;margin-left:6px">2025/26</strong></div>
-        <div class="search" title="Search teams, abbreviations, or positions">
-          <input id="search" placeholder="Search teams or abbreviations..." />
-        </div>
-        <button class="btn" id="export">Export CSV</button>
-        <button class="btn ghost" id="reset">Reset</button>
-      </div>
+      <h1 id="homeBtn">Stoke City</h1>
+      <nav>
+        <button>Home</button>
+        <button>News</button>
+        <button>Fixtures</button>
+        <button>Results</button>
+        <button>Table</button>
+        <button>Shop</button>
+      </nav>
     </header>
+
+    <div class="controls">
+      <div class="search"><input id="search" placeholder="Search teams..." /></div>
+      <button class="btn" id="export">Export CSV</button>
+      <button class="btn ghost" id="reset">Reset</button>
+    </div>
 
     <section class="card">
       <div style="overflow:auto">
         <table id="standings" aria-label="Championship table">
           <thead>
             <tr>
-              <th class="sortable" data-key="pos"># <span class="sort-ind">⇅</span></th>
+              <th data-key="pos">#</th>
               <th>Team</th>
-              <th class="sortable" data-key="played">Pld <span class="sort-ind">⇅</span></th>
-              <th class="sortable" data-key="wins">W <span class="sort-ind">⇅</span></th>
-              <th class="sortable" data-key="draws">D <span class="sort-ind">⇅</span></th>
-              <th class="sortable" data-key="losses">L <span class="sort-ind">⇅</span></th>
-              <th class="sortable" data-key="gf">GF <span class="sort-ind">⇅</span></th>
-              <th class="sortable" data-key="ga">GA <span class="sort-ind">⇅</span></th>
-              <th class="sortable" data-key="gd">GD <span class="sort-ind">⇅</span></th>
-              <th class="sortable" data-key="pts">Pts <span class="sort-ind">⇅</span></th>
+              <th data-key="played">Pld</th>
+              <th data-key="wins">W</th>
+              <th data-key="draws">D</th>
+              <th data-key="losses">L</th>
+              <th data-key="gf">GF</th>
+              <th data-key="ga">GA</th>
+              <th data-key="gd">GD</th>
+              <th data-key="pts">Pts</th>
               <th>Form</th>
             </tr>
           </thead>
-          <tbody id="tbody">
-            <!-- Rows inserted by JavaScript -->
-          </tbody>
+          <tbody id="tbody"></tbody>
         </table>
       </div>
-
-      <footer>
-        <div style="display:flex;justify-content:space-between;align-items:center">
-          <div class="hint">Click headers to sort. Use search to filter teams. Export to CSV for offline use.</div>
-          <div class="hint">Made for GitHub Pages — drop this file into your repo and enable Pages.</div>
-        </div>
-      </footer>
+      <footer>Championship 2025/26 • Stoke City Fansite</footer>
     </section>
   </div>
 
   <script>
-    // Sample dataset (20 teams). Replace or update this array with real standings.
-    const data = [
-      {pos:1,team:'Aldridge FC',abbr:'ALD',played:46,wins:28,draws:10,losses:8,gf:84,ga:36,pts:94,form:['W','W','D','W','W']},
-      {pos:2,team:'Bexley United',abbr:'BEX',played:46,wins:26,draws:11,losses:9,gf:73,ga:39,pts:89,form:['W','W','W','D','L']},
-      {pos:3,team:'Carleton Rovers',abbr:'CAR',played:46,wins:24,draws:12,losses:10,gf:69,ga:44,pts:84,form:['W','D','W','L','W']},
-      {pos:4,team:'Dunham Athletic',abbr:'DUN',played:46,wins:22,draws:13,losses:11,gf:66,ga:50,pts:79,form:['D','W','D','W','L']},
-      {pos:5,team:'Everly Borough',abbr:'EVE',played:46,wins:21,draws:12,losses:13,gf:61,ga:52,pts:75,form:['L','W','W','D','W']},
-      {pos:6,team:'Farnham City',abbr:'FAR',played:46,wins:19,draws:14,losses:13,gf:58,ga:49,pts:71,form:['W','L','W','D','D']},
-      {pos:7,team:'Grafton Town',abbr:'GRA',played:46,wins:18,draws:13,losses:15,gf:56,ga:55,pts:67,form:['D','D','W','L','W']},
-      {pos:8,team:'Hollis Athletic',abbr:'HOL',played:46,wins:17,draws:14,losses:15,gf:54,ga:58,pts:65,form:['L','D','W','W','L']},
-      {pos:9,team:'Ilkley United',abbr:'ILK',played:46,wins:16,draws:14,losses:16,gf:50,ga:51,pts:62,form:['W','W','L','D','D']},
-      {pos:10,team:'Juniper Rovers',abbr:'JUN',played:46,wins:15,draws:13,losses:18,gf:48,ga:57,pts:58,form:['L','L','D','W','W']},
-      {pos:11,team:'Kelbourne FC',abbr:'KEL',played:46,wins:14,draws:14,losses:18,gf:45,ga:60,pts:56,form:['W','D','L','L','D']},
-      {pos:12,team:'Lowry Town',abbr:'LOW',played:46,wins:13,draws:15,losses:18,gf:43,ga:62,pts:54,form:['D','D','L','W','L']},
-      {pos:13,team:'Marlow & Co',abbr:'MAR',played:46,wins:12,draws:14,losses:20,gf:41,ga:65,pts:50,form:['L','L','D','D','W']},
-      {pos:14,team:'Norwell',abbr:'NOR',played:46,wins:11,draws:15,losses:20,gf:39,ga:66,pts:48,form:['D','W','L','L','L']},
-      {pos:15,team:'Oakfield',abbr:'OAK',played:46,wins:10,draws:13,losses:23,gf:36,ga:68,pts:43,form:['L','W','L','D','L']},
-      {pos:16,team:'Pendle Athletic',abbr:'PEN',played:46,wins:9,draws:14,losses:23,gf:33,ga:70,pts:41,form:['L','L','L','D','D']},
-      {pos:17,team:'Quinton Rovers',abbr:'QUI',played:46,wins:8,draws:12,losses:26,gf:31,ga:78,pts:36,form:['L','L','D','L','W']},
-      {pos:18,team:'Riverside',abbr:'RIV',played:46,wins:7,draws:10,losses:29,gf:28,ga:81,pts:31,form:['L','L','L','L','D']},
-      {pos:19,team:'Stonebridge',abbr:'STO',played:46,wins:6,draws:9,losses:31,gf:25,ga:86,pts:27,form:['L','D','L','L','L']},
-      {pos:20,team:'Thornfield',abbr:'THO',played:46,wins:4,draws:8,losses:34,gf:22,ga:92,pts:20,form:['L','L','L','L','L']}
+    const teams = [
+      'Birmingham City','Blackburn Rovers','Bristol City','Charlton Athletic','Coventry City','Derby County','Hull City','Ipswich Town','Leicester City','Middlesbrough','Millwall','Norwich City','Oxford United','Portsmouth','Preston North End','Queens Park Rangers','Sheffield United','Sheffield Wednesday','Southampton','Stoke City','Swansea City','Watford','West Bromwich Albion','Wrexham'
     ];
-
-    // Derived fields
-    data.forEach(d=>{d.gd = d.gf - d.ga});
-
-    const tbody = document.getElementById('tbody');
-    const search = document.getElementById('search');
-    const exportBtn = document.getElementById('export');
-    const resetBtn = document.getElementById('reset');
-
-    function render(rows){
-      tbody.innerHTML = '';
-      rows.forEach(r=>{
-        const tr = document.createElement('tr');
-        tr.innerHTML = `
-          <td class="pos">${r.pos}</td>
-          <td>
-            <div class="team-cell">
-              <div class="badge" title="${r.team} logo">
-                <span style="font-size:14px">${r.abbr}</span>
-              </div>
-              <div>
-                <div class="team-name">${r.team}</div>
-                <div class="team-sub">${r.abbr}</div>
-              </div>
-            </div>
-          </td>
-          <td class="num">${r.played}</td>
-          <td class="num">${r.wins}</td>
-          <td class="num">${r.draws}</td>
-          <td class="num">${r.losses}</td>
-          <td class="num">${r.gf}</td>
-          <td class="num">${r.ga}</td>
-          <td class="num gd-pos">${r.gd} <div class="progress" style="margin-left:10px"><i style="width:${Math.min(100,Math.abs(r.gd))*0.9}%"></i></div></td>
-          <td class="pts">${r.pts}</td>
-          <td>
-            <div class="form">${r.form.map(f=>`<div class="dot ${f==='W'?'win':f==='D'?'draw':'loss'}" title="${f}"></div>`).join('')}</div>
-          </td>
-        `;
-        tbody.appendChild(tr);
-      });
-    }
-
-    // initial render
+    const data = teams.map((t,i)=>({pos:i+1,team:t,abbr:t.split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,3),played:0,wins:0,draws:0,losses:0,gf:0,ga:0,gd:0,pts:0,form:[]}));
+    const tbody=document.getElementById('tbody');
+    function render(rows){tbody.innerHTML='';rows.forEach(r=>{const tr=document.createElement('tr');tr.innerHTML=`<td class="pos">${r.pos}</td><td><div class="team-cell"><div class="badge">${r.abbr}</div><div><div class="team-name">${r.team}</div><div class="team-sub">${r.abbr}</div></div></div></td><td class="num">${r.played}</td><td class="num">${r.wins}</td><td class="num">${r.draws}</td><td class="num">${r.losses}</td><td class="num">${r.gf}</td><td class="num">${r.ga}</td><td class="num">${r.gd}</td><td class="pts">${r.pts}</td><td><div class="form">${r.form.map(f=>`<div class="dot ${f==='W'?'win':f==='D'?'draw':'loss'}"></div>`).join('')}</div></td>`;tbody.appendChild(tr);});}
     render(data);
 
-    // sorting
-    const headers = document.querySelectorAll('th.sortable');
-    let currentSort = {key:'pos',dir:1};
-    headers.forEach(h=>{
-      h.addEventListener('click',()=>{
-        const key = h.dataset.key;
-        if(currentSort.key===key) currentSort.dir *= -1; else currentSort = {key:key,dir: -1};
-        sortAndRender();
-      });
-    });
-
-    function sortAndRender(){
-      const sorted = [...data].sort((a,b)=>{
-        const k = currentSort.key;
-        if(typeof a[k] === 'string') return currentSort.dir * a[k].localeCompare(b[k]);
-        return currentSort.dir * (a[k] - b[k]);
-      });
-      // update positions based on pts then gd then gf when sorting by pts (common tiebreakers)
-      if(currentSort.key==='pts'){
-        sorted.sort((a,b)=> b.pts - a.pts || b.gd - a.gd || b.gf - a.gf);
-        sorted.forEach((s,i)=>s.pos = i+1);
-      }
-      render(sorted);
-    }
-
-    // search / filter
-    search.addEventListener('input',()=>{
-      const q = search.value.trim().toLowerCase();
-      if(!q) return render(data);
-      const filtered = data.filter(d=> (d.team+d.abbr+d.pos).toLowerCase().includes(q));
-      render(filtered);
-    });
-
-    // export CSV
-    function toCSV(rows){
-      const cols = ['Pos','Team','Abbr','Pld','W','D','L','GF','GA','GD','Pts','Form'];
-      const lines = [cols.join(',')];
-      rows.forEach(r=>{
-        lines.push([r.pos,`"${r.team.replace(/"/g,'""') }"`,r.abbr,r.played,r.wins,r.draws,r.losses,r.gf,r.ga,r.gd,r.pts,`"${r.form.join('-') }"`].join(','));
-      });
-      return lines.join('\n');
-    }
-
-    exportBtn.addEventListener('click',()=>{
-      // export currently visible rows
-      const trs = Array.from(tbody.querySelectorAll('tr'));
-      const rows = trs.map(tr=>{
-        const tds = tr.querySelectorAll('td');
-        return {
-          pos: tds[0].textContent.trim(),
-          team: tds[1].querySelector('.team-name').textContent.trim(),
-          abbr: tds[1].querySelector('.team-sub').textContent.trim(),
-          played: tds[2].textContent.trim(),
-          wins: tds[3].textContent.trim(),
-          draws: tds[4].textContent.trim(),
-          losses: tds[5].textContent.trim(),
-          gf: tds[6].textContent.trim(),
-          ga: tds[7].textContent.trim(),
-          gd: tds[8].textContent.trim(),
-          pts: tds[9].textContent.trim(),
-          form: Array.from(tds[10].querySelectorAll('.dot')).map(d=>d.title).join('-')
-        }
-      });
-      const csv = toCSV(rows);
-      const blob = new Blob([csv],{type:'text/csv;charset=utf-8;'});
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a'); a.href = url; a.download = 'standings.csv'; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
-    });
-
-    resetBtn.addEventListener('click',()=>{ search.value=''; render(data); currentSort = {key:'pos',dir:1}; });
-
-    // keyboard support: / focuses search
-    window.addEventListener('keydown', (e)=>{ if(e.key==='/' && document.activeElement !== search){ e.preventDefault(); search.focus(); }});
-
-    // accessibility small enhancement: allow Enter on header to sort
-    headers.forEach(h=>{ h.tabIndex = 0; h.addEventListener('keydown', (e)=>{ if(e.key==='Enter') h.click(); }); });
+    document.getElementById('search').addEventListener('input',e=>{const q=e.target.value.toLowerCase();if(!q) return render(data);render(data.filter(d=>(d.team+d.abbr).toLowerCase().includes(q)));});
+    document.getElementById('export').addEventListener('click',()=>{const cols=['Pos','Team','Abbr','Pld','W','D','L','GF','GA','GD','Pts','Form'];const lines=[cols.join(',')];data.forEach(r=>lines.push([r.pos,r.team,r.abbr,r.played,r.wins,r.draws,r.losses,r.gf,r.ga,r.gd,r.pts,r.form.join('-')].join(',')));const blob=new Blob([lines.join('\n')],{type:'text/csv'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download='stoke-city-championship.csv';a.click();URL.revokeObjectURL(url);});
+    document.getElementById('reset').addEventListener('click',()=>{document.getElementById('search').value='';render(data);});
+    document.getElementById('homeBtn').addEventListener('click',()=>{location.reload();});
   </script>
 </body>
 </html>
+ 
