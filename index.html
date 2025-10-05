@@ -173,7 +173,7 @@
         vs: 'Derby County',
         venue: 'home',
         comp: 'Championship',
-        result: ''  // eg '2-1 W' or leave blank until played
+        result: 3''1  // eg '2-1 W' or leave blank until played
       },
       {
         md: 2,
@@ -182,7 +182,7 @@
         vs: 'Sheffield Wednesday',
         venue: 'away',
         comp: 'Championship',
-        result: ''
+        result: 0''3
       },
       {
         md: 3,
@@ -200,7 +200,7 @@
         vs: 'West Bromwich Albion',
         venue: 'home',
         comp: 'Championship',
-        result: ''
+        result: '1-2'
       },
       {
         md: 5,
@@ -209,11 +209,16 @@
         vs: 'Birmingham City',
         venue: 'home',
         comp: 'Championship',
-        result: ''
+        result: '1-0'
       },
-      // … You would continue and fill all 46 matchdays.
-    ];
-
+      {
+        md: 6,
+        date  '20/09/2025,
+        time: '12:30',
+        vs:  'QPR',
+        venue:  'away',
+        comp:  'Championship',
+        result: '1-0'  
     function renderFixtures() {
       const body = document.getElementById('fixturesBody');
       body.innerHTML = '';
