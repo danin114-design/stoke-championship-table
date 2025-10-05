@@ -1,256 +1,102 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Stoke City Championship Standings 2025/26</title>
+  <meta charset="UTF-8">
+  <title>2025/26 Championship Table</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
   <style>
-    :root{
-      --stoke-red:#d71920; --stoke-white:#ffffff; --bg:#0f1724; --card:#111827; --muted:#cbd5e1;
-      --accent:#d71920; --accent-2:#991b1b;
-      --win:#10b981; --draw:#f59e0b; --loss:#ef4444;
-      font-family: Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+    body {
+      font-family: 'Roboto', sans-serif;
+      background: linear-gradient(to bottom, #f4f4f4, #e0e0e0);
+      margin: 0;
+      padding: 20px;
     }
-    *{box-sizing:border-box;margin:0;padding:0}
-    body{margin:0;background:#0f1724;color:#f8fafc}
-    .wrap{max-width:1200px;margin:0 auto;padding:20px}
-
-    header{background:var(--stoke-red);color:var(--stoke-white);display:flex;align-items:center;justify-content:space-between;padding:14px 20px;border-radius:10px;box-shadow:0 4px 20px rgba(0,0,0,0.3);}
-    header h1{font-size:24px;font-weight:800;cursor:pointer;}
-    nav{display:flex;gap:14px}
-    nav button{background:transparent;border:2px solid var(--stoke-white);color:var(--stoke-white);padding:6px 14px;border-radius:8px;font-weight:600;cursor:pointer;transition:0.2s}
-    nav button:hover{background:var(--stoke-white);color:var(--stoke-red)}
-
-    .controls{display:flex;gap:10px;align-items:center;margin:16px 0}
-    .search{background:var(--card);border:1px solid rgba(255,255,255,0.1);padding:8px 12px;border-radius:10px;min-width:220px}
-    .search input{background:transparent;border:0;color:inherit;outline:none;width:100%}
-    .btn{background:linear-gradient(90deg,var(--accent),var(--accent-2));padding:8px 12px;border-radius:10px;border:none;color:#fff;font-weight:600;cursor:pointer}
-    .btn.ghost{background:transparent;border:1px solid rgba(255,255,255,0.2);color:var(--muted);}
-
-    .card{background:var(--card);border-radius:14px;padding:18px;border:1px solid rgba(255,255,255,0.05);box-shadow:0 8px 30px rgba(0,0,0,0.5)}
-    table{width:100%;border-collapse:collapse;font-size:14px}
-    thead th{position:sticky;top:0;background:var(--stoke-red);color:var(--stoke-white);padding:10px;text-align:left;font-weight:700;font-size:13px}
-    tbody tr{transition:background .12s ease;border-bottom:1px solid rgba(255,255,255,0.05)}
-    tbody tr:hover{background:rgba(215,25,32,0.2)}
-    td{padding:12px 10px;vertical-align:middle}
-    .pos{width:40px;font-weight:700;color:var(--muted)}
-    .team-cell{display:flex;gap:12px;align-items:center}
-    .badge{width:36px;height:36px;border-radius:6px;background:var(--stoke-red);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700}
-    .team-name{font-weight:700}
-    .team-sub{color:var(--muted);font-size:12px}
-    .num{text-align:right;color:var(--muted)}
-    .pts{text-align:right;font-weight:800;color:#fff}
-    .form{display:flex;gap:6px}
-    .form .dot{width:12px;height:12px;border-radius:6px}
-    .dot.win{background:var(--win)}
-    .dot.draw{background:var(--draw)}
-    .dot.loss{background:var(--loss)}
-    footer{margin-top:12px;color:var(--muted);font-size:13px;text-align:center}
-  </style>
-</head>
-<body>
-  <div class="wrap">
-    <header>
-      <h1 id="homeBtn">Stoke City</h1>
-      <nav>
-        <button>Home</button>
-        <button>News</button>
-        <button>Fixtures</button>
-        <button>Results</button>
-        <button>Table</button>
-        <button>Shop</button>
-      </nav>
-    </header>
-
-    <div class="controls">
-      <div class="search"><input id="search" placeholder="Search teams..." /></div>
-      <button class="btn" id="export">Export CSV</button>
-      <button class="btn ghost" id="reset">Reset</button>
-    </div>
-
-    <section class="card">
-      <div style="overflow:auto">
-        <table id="standings" aria-label="Championship table">
-          <thead>
-            <tr>
-              <th data-key="pos">#</th>
-              <th>Team</th>
-              <th data-key="played">Pld</th>
-              <th data-key="wins">W</th>
-              <th data-key="draws">D</th>
-              <th data-key="losses">L</th>
-              <th data-key="gf">GF</th>
-              <th data-key="ga">GA</th>
-              <th data-key="gd">GD</th>
-              <th data-key="pts">Pts</th>
-              <th>Form</th>
-            </tr>
-          </thead>
-          <tbody id="tbody"></tbody>
-        </table>
-      </div>
-      <footer>Championship 2025/26 • Stoke City Fansite</footer>
-    </section>
-  </div>
-
-  <script>
-    const teams = [
-      'Birmingham City','Blackburn Rovers','Bristol City','Charlton Athletic','Coventry City','Derby County','Hull City','Ipswich Town','Leicester City','Middlesbrough','Millwall','Norwich City','Oxford United','Portsmouth','Preston North End','Queens Park Rangers','Sheffield United','Sheffield Wednesday','Southampton','Stoke City','Swansea City','Watford','West Bromwich Albion','Wrexham'
-    ];
-    const data = teams.map((t,i)=>({pos:i+1,team:t,abbr:t.split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,3),played:0,wins:0,draws:0,losses:0,gf:0,ga:0,gd:0,pts:0,form:[]}));
-    const tbody=document.getElementById('tbody');
-    function render(rows){tbody.innerHTML='';rows.forEach(r=>{const tr=document.createElement('tr');tr.innerHTML=`<td class="pos">${r.pos}</td><td><div class="team-cell"><div class="badge">${r.abbr}</div><div><div class="team-name">${r.team}</div><div class="team-sub">${r.abbr}</div></div></div></td><td class="num">${r.played}</td><td class="num">${r.wins}</td><td class="num">${r.draws}</td><td class="num">${r.losses}</td><td class="num">${r.gf}</td><td class="num">${r.ga}</td><td class="num">${r.gd}</td><td class="pts">${r.pts}</td><td><div class="form">${r.form.map(f=>`<div class="dot ${f==='W'?'win':f==='D'?'draw':'loss'}"></div>`).join('')}</div></td>`;tbody.appendChild(tr);});}
-    render(data);
-
-    document.getElementById('search').addEventListener('input',e=>{const q=e.target.value.toLowerCase();if(!q) return render(data);render(data.filter(d=>(d.team+d.abbr).toLowerCase().includes(q)));});
-    document.getElementById('export').addEventListener('click',()=>{const cols=['Pos','Team','Abbr','Pld','W','D','L','GF','GA','GD','Pts','Form'];const lines=[cols.join(',')];data.forEach(r=>lines.push([r.pos,r.team,r.abbr,r.played,r.wins,r.draws,r.losses,r.gf,r.ga,r.gd,r.pts,r.form.join('-')].join(',')));const blob=new Blob([lines.join('\n')],{type:'text/csv'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download='stoke-city-championship.csv';a.click();URL.revokeObjectURL(url);});
-    document.getElementById('reset').addEventListener('click',()=>{document.getElementById('search').value='';render(data);});
-    document.getElementById('homeBtn').addEventListener('click',()=>{location.reload();});
-  </script>
-</body>
-</html>
- <!doctype html>
-<html lang="en">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Stoke City Fixtures 2025/26</title>
-  <style>
-    body { background:#0f1724; color:#f8fafc; font-family:Arial, sans-serif; margin:0; padding:0; }
-    header { background:#d71920; color:#fff; padding:16px; display:flex; align-items:center; justify-content:space-between; }
-    header h1 { cursor:pointer; margin:0; }
-    nav button { background:transparent; border:2px solid #fff; color:#fff; padding:6px 12px; margin-left:8px; border-radius:6px; cursor:pointer; }
-    nav button:hover { background:#fff; color:#d71920; }
-    .wrap { max-width:1000px; margin:20px auto; padding:0 16px; }
-    table { width:100%; border-collapse:collapse; margin-top:16px; }
-    th, td { padding:12px; border:1px solid rgba(255,255,255,0.2); }
-    th { background:#d71920; color:#fff; position:sticky; top:0; }
-    tbody tr:nth-child(even) { background:rgba(255,255,255,0.05); }
-    .venue-home { color: #06b6d4; } /* home */
-    .venue-away { color: #f59e0b; } /* away */
+    header {
+      text-align: center;
+      padding: 20px;
+      background-color: #d60000;
+      color: white;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+    h1 {
+      margin: 0;
+      font-size: 2em;
+    }
+    .table-container {
+      max-width: 1000px;
+      margin: 30px auto;
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      overflow-x: auto;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    th, td {
+      padding: 12px;
+      text-align: center;
+      border-bottom: 1px solid #ddd;
+    }
+    th {
+      background-color: #d60000;
+      color: white;
+      font-weight: 700;
+    }
+    tr:nth-child(even) {
+      background-color: #f9f9f9;
+    }
+    tr:hover {
+      background-color: #ffe5e5;
+    }
+    .stoke {
+      background-color: #fff0f0;
+      font-weight: bold;
+      color: #d60000;
+    }
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+    footer {
+      text-align: center;
+      font-size: 0.9em;
+      color: #555;
+      margin-top: 40px;
+    }
   </style>
 </head>
 <body>
   <header>
-    <h1 id="homeBtn">Stoke City</h1>
-    <nav>
-      <button onclick="goHome()">Home</button>
-      <button onclick="goNews()">News</button>
-      <button onclick="goFixtures()">Fixtures</button>
-      <button onclick="goResults()">Results</button>
-      <button onclick="goTable()">Table</button>
-      <button onclick="goShop()">Shop</button>
-    </nav>
+    <h1>2025/26 EFL Championship Table</h1>
+    <p>Click a team to view match-by-match stats</p>
   </header>
 
-  <div class="wrap">
-    <h2>2025/26 Stoke City Fixtures</h2>
-    <table id="fixturesTable" aria-label="Stoke City Fixtures">
+  <div class="table-container">
+    <table>
       <thead>
         <tr>
-          <th>Matchday</th>
-          <th>Date</th>
-          <th>Time</th>
-          <th>Opponent</th>
-          <th>Venue</th>
-          <th>Competition</th>
-          <th>Result</th>
+          <th>Pos</th><th>Team</th><th>Pld</th><th>W</th><th>D</th><th>L</th><th>GF</th><th>GA</th><th>GD</th><th>Pts</th>
         </tr>
       </thead>
-      <tbody id="fixturesBody">
-        <!-- JS will insert rows -->
-      </tbody>
-    </table>
-  </div>
-
-  <script>
-    // Sample fixtures data (fill all matches)
-    const fixtures = [
-      {
-        md: 1,
-        date: '09/08/2025',
-        time: '15:00',
-        vs: 'Derby County',
-        venue: 'home',
-        comp: 'Championship',
-        result: 3''1  // eg '2-1 W' or leave blank until played
-      },
-      {
-        md: 2,
-        date: '16/08/2025',
-        time: '15:00',
-        vs: 'Sheffield Wednesday',
-        venue: 'away',
-        comp: 'Championship',
-        result: 0''3
-      },
-      {
-        md: 3,
-        date: '23/08/2025',
-        time: '15:00',
-        vs: 'Southampton',
-        venue: 'away',
-        comp: 'Championship',
-        result: ''
-      },
-      {
-        md: 4,
-        date: '30/08/2025',
-        time: '15:00',
-        vs: 'West Bromwich Albion',
-        venue: 'home',
-        comp: 'Championship',
-        result: '1-2'
-      },
-      {
-        md: 5,
-        date: '13/09/2025',
-        time: '15:00',
-        vs: 'Birmingham City',
-        venue: 'home',
-        comp: 'Championship',
-        result: '1-0'
-      },
-      {
-        md: 6,
-        date  '20/09/2025,
-        time: '12:30',
-        vs:  'QPR',
-        venue:  'away',
-        comp:  'Championship',
-        result: '1-0'  
-    function renderFixtures() {
-      const body = document.getElementById('fixturesBody');
-      body.innerHTML = '';
-      fixtures.forEach(f => {
-        const tr = document.createElement('tr');
-        tr.innerHTML = `
-          <td>${f.md}</td>
-          <td>${f.date}</td>
-          <td>${f.time}</td>
-          <td>${f.vs}</td>
-          <td class="${f.venue === 'home' ? 'venue-home' : 'venue-away'}">${f.venue === 'home' ? 'Home' : 'Away'}</td>
-          <td>${f.comp}</td>
-          <td>${f.result}</td>
-        `;
-        body.appendChild(tr);
-      });
-    }
-
-    renderFixtures();
-
-    // Navigation functions (you can customize URLs)
-    function goHome() { window.location.href = '/'; }
-    function goNews() { window.location.href = '/news'; }
-    function goFixtures() { window.location.href = '/fixtures'; }
-    function goResults() { window.location.href = '/results'; }
-    function goTable() { window.location.href = '/table'; }
-    function goShop() { window.location.href = '/shop'; }
-
-    document.getElementById('homeBtn').addEventListener('click', () => {
-      window.location.href = '/';
-    });
-  </script>
-</body>
-</html>
-
+      <tbody>
+        <tr><td>1</td><td><a href="teams/middlesbrough.html">Middlesbrough</a></td><td>8</td><td>5</td><td>3</td><td>0</td><td>12</td><td>5</td><td>+7</td><td>18</td></tr>
+        <tr><td>2</td><td><a href="teams/coventry-city.html">Coventry City</a></td><td>8</td><td>4</td><td>4</td><td>0</td><td>22</td><td>7</td><td>+15</td><td>16</td></tr>
+        <tr><td>3</td><td><a href="teams/stoke-city.html">Stoke City</a></td><td>8</td><td>4</td><td>2</td><td>2</td><td>10</td><td>5</td><td>+5</td><td>14</td></tr>
+        <tr><td>4</td><td><a href="teams/west-brom.html">West Brom</a></td><td>8</td><td>4</td><td>2</td><td>2</td><td>9</td><td>7</td><td>+2</td><td>14</td></tr>
+        <tr><td>5</td><td><a href="teams/bristol-city.html">Bristol City</a></td><td>8</td><td>3</td><td>4</td><td>1</td><td>14</td><td>8</td><td>+6</td><td>13</td></tr>
+        <tr><td>6</td><td><a href="teams/leicester-city.html">Leicester City</a></td><td>8</td><td>3</td><td>4</td><td>1</td><td>10</td><td>7</td><td>+3</td><td>13</td></tr>
+        <tr><td>7</td><td><a href="teams/preston-north-end.html">Preston North End</a></td><td>8</td><td>3</td><td>4</td><td>1</td><td>9</td><td>7</td><td>+2</td><td>13</td></tr>
+        <tr><td>8</td><td><a href="teams/swansea-city.html">Swansea City</a></td><td>8</td><td>3</td><td>3</td><td>2</td><td>9</td><td>7</td><td>+2</td><td>12</td></tr>
+        <tr><td>9</td><td><a href="teams/charlton-athletic.html">Charlton Athletic</a></td><td>8</td><td>3</td><td>3</td><td>2</td><td>8</td><td>6</td><td>+2</td><td>12</td></tr>
+        <tr><td>10</td><td><a href="teams/qpr.html">QPR</a></td><td>8</td><td>3</td><td>3</td><td>2</td><td>11</td><td>13</td><td>-2</td><td>12</td></tr>
+        <tr><td>11</td><td><a href="teams/birmingham-city.html">Birmingham City</a></td><td>9</td><td>3</td><td>3</td><td>3</td><td>8</td><td>11</td><td>-3</td><td>12</td></tr>
+        <tr><td>12</td><td><a href="teams/millwall.html">Millwall</a></td><td>8</td><td>3</td><td>2</td><td>3</td><td>6</td><td>12</td><td>-6</td><td>11</td></tr>
+        <tr><td>13</td><td><a href="teams/ipswich-town.html">Ipswich Town</a></td><td>7</td><td>2</td><td>4</td><td>1</td><td>12</td><td>7</td><td>+5</td><td>10</td></tr>
+        <tr><td>14</td><td><a href="teams/southampton.html">Southampton</a></td><td>8</td><td>2</td><td>4</td><td>2</td><td>10</td><td>11</td><td>-1</td><td>10</td></tr>
+        <tr><td>15</td><td><a href="teams/wrexham.html">Wrexham</a></td><td>9</td><td>2</td><td>4</td><td>3</td><td>14</td><td>15</td><td>-1</td><td>10</td></tr>
+        <tr><td>16</td><td><a href="teams/watford.html">Watford</a></td><td>8</td><td>2</td><td>3</td><td>3</td><td>9</td><td>10</td><td>-1</td><td>9</td></tr>
+        <tr><td>17</td><td><a href="teams/portsmouth.html">Portsmouth</a></td><td>8</td><td>2</td><td>3</td><td>3</td><td>7</td><td>9</
